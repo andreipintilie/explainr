@@ -1,0 +1,495 @@
+.explainr-modal {
+  display: none;
+  position: fixed;
+  z-index: 50;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.explainr-modal-content {
+  background-color: hsl(0, 0%, 100%);
+  margin: auto;
+  padding: 24px;
+  border: 1px solid hsl(0, 0%, 89.8%);
+  width: 32rem;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  position: relative;
+  color: hsl(0, 0%, 3.9%);
+  animation: slideIn 0.15s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.explainr-close-button {
+  color: hsl(0, 0%, 45.1%);
+  float: right;
+  font-size: 20px;
+  font-weight: 400;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.explainr-close-button:hover,
+.explainr-close-button:focus {
+  color: hsl(0, 0%, 3.9%);
+  background-color: hsl(0, 0%, 96.1%);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.explainr-modal-content h2 {
+  color: hsl(0, 0%, 3.9%);
+  margin-top: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+
+.explainr-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.explainr-modal-logo {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.explainr-modal-content h3 {
+  color: hsl(0, 0%, 3.9%);
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.explainr-selected-text-container p {
+  background-color: hsl(0, 0%, 98%);
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid hsl(0, 0%, 89.8%);
+  font-size: 14px;
+  color: hsl(0, 0%, 45.1%);
+  max-height: 120px;
+  overflow-y: auto;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.explainr-context-input-container textarea {
+  width: calc(100% - 24px);
+  padding: 12px;
+  margin-top: 8px;
+  border: 1px solid hsl(0, 0%, 89.8%);
+  border-radius: 6px;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 80px;
+  background-color: hsl(0, 0%, 100%);
+  color: hsl(0, 0%, 3.9%);
+  transition: border-color 0.15s ease;
+  outline: none;
+}
+
+.explainr-context-input-container textarea:focus {
+  border-color: hsl(0, 0%, 3.9%);
+  box-shadow: 0 0 0 2px hsl(0, 0%, 3.9%, 0.1);
+}
+
+.explainr-context-input-container textarea::placeholder {
+  color: hsl(0, 0%, 63.9%);
+}
+
+.explainr-actions {
+  text-align: right;
+  margin-top: 24px;
+}
+
+.explainr-actions button {
+  background-color: hsl(0, 0%, 9%);
+  color: hsl(0, 0%, 98%);
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.15s ease;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.explainr-actions button:hover {
+  background-color: hsl(0, 0%, 9%, 0.9);
+}
+
+.explainr-actions button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(0, 0%, 3.9%, 0.2);
+}
+
+.explainr-explanation-output {
+  background-color: hsl(0, 0%, 98%);
+  border: 1px solid hsl(0, 0%, 89.8%);
+  padding: 16px;
+  margin-top: 20px;
+  border-radius: 6px;
+  min-height: 60px;
+  max-height: 240px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 14px;
+  line-height: 1.6;
+  color: hsl(0, 0%, 3.9%);
+}
+
+/* History modal styles */
+.explainr-history-content {
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.explainr-history-navigation {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid hsl(0, 0%, 89.8%);
+}
+
+.explainr-history-navigation button {
+  padding: 8px 16px;
+  border: 1px solid hsl(0, 0%, 89.8%);
+  border-radius: 6px;
+  background-color: hsl(0, 0%, 100%);
+  color: hsl(0, 0%, 3.9%);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.explainr-history-navigation button:hover {
+  background-color: hsl(0, 0%, 96.1%);
+  border-color: hsl(0, 0%, 70%);
+}
+
+.explainr-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.explainr-history-item {
+  padding: 16px;
+  border: 1px solid hsl(0, 0%, 89.8%);
+  border-radius: 6px;
+  background-color: hsl(0, 0%, 100%);
+  transition: all 0.2s ease;
+}
+
+.explainr-history-item:hover {
+  border-color: hsl(0, 0%, 70%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.explainr-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: hsl(0, 0%, 45.1%);
+}
+
+.explainr-history-text {
+  font-size: 14px;
+  line-height: 1.4;
+  color: hsl(0, 0%, 3.9%);
+  margin-bottom: 8px;
+}
+
+.explainr-history-context {
+  font-size: 12px;
+  color: hsl(0, 0%, 45.1%);
+  font-style: italic;
+  margin-bottom: 12px;
+}
+
+.explainr-view-history-item {
+  padding: 6px 12px;
+  border: 1px solid hsl(0, 0%, 89.8%);
+  border-radius: 4px;
+  background-color: hsl(0, 0%, 98%);
+  color: hsl(0, 0%, 3.9%);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.explainr-view-history-item:hover {
+  background-color: hsl(0, 0%, 3.9%);
+  color: hsl(0, 0%, 98%);
+}
+
+.explainr-no-history {
+  text-align: center;
+  color: hsl(0, 0%, 45.1%);
+  font-style: italic;
+  padding: 40px 20px;
+}
+
+/* Loading animation */
+.explainr-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  color: hsl(0, 0%, 45.1%);
+  font-size: 14px;
+}
+
+.explainr-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid hsl(0, 0%, 89.8%);
+  border-top: 2px solid hsl(0, 0%, 3.9%);
+  border-radius: 50%;
+  animation: explainr-spin 1s linear infinite;
+}
+
+@keyframes explainr-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Response modal specific styles */
+.explainr-response-content {
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.explainr-response-navigation {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid hsl(0, 0%, 89.8%);
+}
+
+.explainr-response-navigation button {
+  padding: 8px 16px;
+  border: 1px solid hsl(0, 0%, 89.8%);
+  border-radius: 6px;
+  background-color: hsl(0, 0%, 100%);
+  color: hsl(0, 0%, 3.9%);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.explainr-response-navigation button:hover {
+  background-color: hsl(0, 0%, 96.1%);
+  border-color: hsl(0, 0%, 70%);
+}
+
+.explainr-full-response {
+  padding: 0;
+}
+
+.explainr-response-meta {
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: hsl(0, 0%, 98%);
+  border: 1px solid hsl(0, 0%, 89.8%);
+  border-radius: 6px;
+}
+
+.explainr-meta-text {
+  margin: 8px 0 0 0;
+  padding: 12px;
+  background-color: hsl(0, 0%, 100%);
+  border: 1px solid hsl(0, 0%, 89.8%);
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  color: hsl(0, 0%, 20%);
+}
+
+.explainr-response-explanation {
+  margin-top: 20px;
+}
+
+.explainr-full-explanation {
+  padding: 20px;
+  background-color: hsl(0, 0%, 100%);
+  border: 1px solid hsl(0, 0%, 89.8%);
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: hsl(0, 0%, 3.9%);
+}
+
+.explainr-explanation-output h1,
+.explainr-explanation-output h2,
+.explainr-explanation-output h3,
+.explainr-explanation-output h4,
+.explainr-explanation-output h5,
+.explainr-explanation-output h6 {
+  color: hsl(0, 0%, 3.9%);
+  font-weight: 600;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  line-height: 1.25;
+}
+
+.explainr-explanation-output h1 {
+  font-size: 20px;
+  border-bottom: 1px solid hsl(0, 0%, 89.8%);
+  padding-bottom: 8px;
+}
+
+.explainr-explanation-output h2 {
+  font-size: 18px;
+  border-bottom: 1px solid hsl(0, 0%, 89.8%);
+  padding-bottom: 6px;
+}
+
+.explainr-explanation-output h3 {
+  font-size: 16px;
+}
+
+.explainr-explanation-output h4 {
+  font-size: 14px;
+}
+
+.explainr-explanation-output p {
+  margin-bottom: 12px;
+  margin-top: 0;
+}
+
+.explainr-explanation-output strong {
+  font-weight: 600;
+  color: hsl(0, 0%, 3.9%);
+}
+
+.explainr-explanation-output em {
+  font-style: italic;
+}
+
+.explainr-explanation-output code {
+  background-color: hsl(0, 0%, 96.1%);
+  border: 1px solid hsl(0, 0%, 89.8%);
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-size: 13px;
+  color: hsl(0, 0%, 3.9%);
+}
+
+.explainr-explanation-output pre {
+  background-color: hsl(0, 0%, 96.1%);
+  border: 1px solid hsl(0, 0%, 89.8%);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.explainr-explanation-output pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.explainr-explanation-output ul,
+.explainr-explanation-output ol {
+  margin: 12px 0;
+  padding-left: 20px;
+}
+
+.explainr-explanation-output li {
+  margin-bottom: 4px;
+}
+
+.explainr-explanation-output ul li {
+  list-style-type: disc;
+}
+
+.explainr-explanation-output ol li {
+  list-style-type: decimal;
+}
+
+.explainr-explanation-output blockquote {
+  border-left: 4px solid hsl(0, 0%, 89.8%);
+  padding-left: 12px;
+  margin: 12px 0;
+  color: hsl(0, 0%, 45.1%);
+  font-style: italic;
+}
+
+.explainr-explanation-output hr {
+  border: none;
+  border-top: 1px solid hsl(0, 0%, 89.8%);
+  margin: 16px 0;
+}
+
+.explainr-explanation-output a {
+  color: hsl(0, 0%, 3.9%);
+  text-decoration: underline;
+}
+
+.explainr-explanation-output a:hover {
+  color: hsl(0, 0%, 45.1%);
+}
