@@ -25,9 +25,16 @@
         "assets/icon16.png",
         "assets/icon48.png",
         "assets/icon128.png",
-        "assets/overlay.css"
+        "assets/overlay.css",
+        "utils.js"
       ],
       "matches": ["<all_urls>"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["utils.js", "content.js"]
     }
   ]
 }
