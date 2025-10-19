@@ -24,7 +24,7 @@ if (typeof window.explainrInitialized === 'undefined') {
       </div>
       <div class="explainr-selected-text-container">
         <h3>Selected Text:</h3>
-        <p id="explainr-modal-selected-text"></p>
+        <p id="explainr-modal-selected-text" contenteditable></p>
       </div>
       <div class="explainr-context-input-container">
         <h3>Additional Context (optional):</h3>
