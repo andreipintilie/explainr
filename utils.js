@@ -1,5 +1,3 @@
-// Utility functions for Explainr extension
-
 const parseMarkdown = (text) => {
   return text
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
@@ -16,5 +14,4 @@ const parseMarkdown = (text) => {
     .replace(/\n/g, '<br>');
 };
 
-// Make parseMarkdown available globally for content script
 window.parseMarkdown = parseMarkdown;

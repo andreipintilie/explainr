@@ -83,11 +83,13 @@ if (typeof window.explainrInitialized === 'undefined') {
 
     explainrModal.querySelector('.explainr-close-button').onclick = () => {
       explainrModal.classList.remove('show');
+      document.body.classList.remove('explainr-modal-open');
     };
 
     explainrModal.onclick = (event) => {
       if (event.target === explainrModal) {
         explainrModal.classList.remove('show');
+        document.body.classList.remove('explainr-modal-open');
       }
     };
   }
@@ -116,6 +118,7 @@ if (typeof window.explainrInitialized === 'undefined') {
           explanationOutput.textContent = '';
         }
         explainrModal.classList.add('show');
+        document.body.classList.add('explainr-modal-open');
       }
     }
   });

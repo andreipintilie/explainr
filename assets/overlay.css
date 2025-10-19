@@ -19,6 +19,10 @@
   display: flex;
 }
 
+body.explainr-modal-open {
+  overflow: hidden;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -123,7 +127,7 @@
 }
 
 .explainr-context-input-container textarea {
-  width: calc(100% - 24px);
+  width: 100%;
   padding: 12px;
   margin-top: 8px;
   border: 1px solid hsl(0, 0%, 89.8%);
