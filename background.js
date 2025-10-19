@@ -2,7 +2,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: 'explainr',
     title: 'Explain with AI',
-    contexts: ['selection'],
+    contexts: ['selection', 'page'],
   });
 });
 
@@ -18,7 +18,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
           chrome.tabs
             .sendMessage(tab.id, {
               action: 'showExplanation',
-              text: info.selectionText,
+              text: info.selectionText || '',
+              noSelection: !info.selectionText,
             })
             .catch((error) => {
               console.log('Content script not ready, retrying...');
@@ -26,7 +27,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                 chrome.tabs
                   .sendMessage(tab.id, {
                     action: 'showExplanation',
-                    text: info.selectionText,
+                    text: info.selectionText || '',
+                    noSelection: !info.selectionText,
                   })
                   .catch(() => {
                     console.log('Failed to communicate with content script');

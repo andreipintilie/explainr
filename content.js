@@ -108,10 +108,10 @@ if (typeof window.explainrInitialized === 'undefined') {
 
       if (selectedTextElement && contextInput && explanationOutput) {
         if (request.noSelection) {
-          selectedTextElement.textContent = 'No text selected.';
+          selectedTextElement.textContent = '';
           contextInput.value = '';
           explanationOutput.textContent =
-            'Highlight text and try again, or provide context below.';
+            'Please provide context or questions below to get an explanation.';
         } else if (request.text) {
           selectedTextElement.textContent = request.text;
           contextInput.value = '';
