@@ -1,13 +1,13 @@
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
-    id: 'explainr',
+    id: 'nano-assistant',
     title: 'Explain with AI',
     contexts: ['selection', 'page'],
   });
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === 'explainr' && tab) {
+  if (info.menuItemId === 'nano-assistant' && tab) {
     chrome.scripting.executeScript(
       {
         target: { tabId: tab.id },
@@ -22,7 +22,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
               noSelection: !info.selectionText,
             })
             .catch((error) => {
-              console.log('Content script not ready, retrying...');
               setTimeout(() => {
                 chrome.tabs
                   .sendMessage(tab.id, {
@@ -30,9 +29,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                     text: info.selectionText || '',
                     noSelection: !info.selectionText,
                   })
-                  .catch(() => {
-                    console.log('Failed to communicate with content script');
-                  });
+                  .catch(() => {});
               }, 100);
             });
         }, 50);

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Explainr",
+  "name": "Nano Assistant",
   "version": "1.0",
-  "description": "Explain selected text with AI.",
+  "description": "Your friendly AI helper.",
   "permissions": ["activeTab", "contextMenus", "scripting"],
   "background": {
     "service_worker": "background.js"
