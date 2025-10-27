@@ -103,9 +103,10 @@ if (typeof window.nanoAssistantInitialized === 'undefined') {
         .map(
           (entry) => `
         <div class="nano-assistant-history-item" data-id="${entry.id}">
-          <div class="nano-assistant-history-text">"${entry.text.substring(0, 150)}${
-            entry.text.length > 150 ? '...' : ''
-          }"</div>
+          <div class="nano-assistant-history-text">"${entry.text.substring(
+            0,
+            150
+          )}${entry.text.length > 150 ? '...' : ''}"</div>
           ${
             entry.context
               ? `<div class="nano-assistant-history-context">Context: ${entry.context}</div>`
@@ -116,31 +117,36 @@ if (typeof window.nanoAssistantInitialized === 'undefined') {
         )
         .join('');
 
-      document.querySelectorAll('.nano-assistant-history-item').forEach((item) => {
-        item.addEventListener('click', function () {
-          const entryId = parseInt(this.dataset.id);
-          const entry = history.find((h) => h.id === entryId);
-          if (entry) {
-            document.getElementById(
-              'nano-assistant-modal-selected-text'
-            ).textContent = entry.text;
-            document.getElementById('nano-assistant-modal-context-input').value =
-              entry.context || '';
+      document
+        .querySelectorAll('.nano-assistant-history-item')
+        .forEach((item) => {
+          item.addEventListener('click', function () {
+            const entryId = parseInt(this.dataset.id);
+            const entry = history.find((h) => h.id === entryId);
+            if (entry) {
+              document.getElementById(
+                'nano-assistant-modal-selected-text'
+              ).textContent = entry.text;
+              document.getElementById(
+                'nano-assistant-modal-context-input'
+              ).value = entry.context || '';
 
-            const explanationOutput = document.getElementById(
-              'nano-assistant-modal-explanation'
-            );
-            const historyOverlay = document.getElementById(
-              'nano-assistant-history-overlay'
-            );
+              const explanationOutput = document.getElementById(
+                'nano-assistant-modal-explanation'
+              );
+              const historyOverlay = document.getElementById(
+                'nano-assistant-history-overlay'
+              );
 
-            explanationOutput.innerHTML = '<p>' + entry.explanation + '</p>';
-            explanationOutput.style.display = 'block';
-            historyOverlay.classList.remove('show');
-            document.body.classList.remove('nano-assistant-history-overlay-open');
-          }
+              explanationOutput.innerHTML = '<p>' + entry.explanation + '</p>';
+              explanationOutput.style.display = 'block';
+              historyOverlay.classList.remove('show');
+              document.body.classList.remove(
+                'nano-assistant-history-overlay-open'
+              );
+            }
+          });
         });
-      });
     }
 
     document.getElementById('nano-assistant-modal-history-button').onclick =
@@ -171,14 +177,13 @@ if (typeof window.nanoAssistantInitialized === 'undefined') {
         }
       };
 
-    document.getElementById('nano-assistant-history-overlay').onclick = function (
-      event
-    ) {
-      if (event.target === this) {
-        this.classList.remove('show');
-        document.body.classList.remove('nano-assistant-history-overlay-open');
-      }
-    };
+    document.getElementById('nano-assistant-history-overlay').onclick =
+      function (event) {
+        if (event.target === this) {
+          this.classList.remove('show');
+          document.body.classList.remove('nano-assistant-history-overlay-open');
+        }
+      };
 
     document.getElementById('nano-assistant-modal-explain-button').onclick =
       async () => {
@@ -205,6 +210,8 @@ if (typeof window.nanoAssistantInitialized === 'undefined') {
           const session = await window.LanguageModel.create({
             model: '@chrome/gemini-nano',
             stream: true,
+            language: 'en',
+            outputLanguage: 'en',
           });
 
           let prompt = `Explain the following text: "${selectedText}"`;
@@ -228,7 +235,6 @@ if (typeof window.nanoAssistantInitialized === 'undefined') {
 
           saveToHistory(selectedText, parsedContent, additionalContext);
         } catch (error) {
-          console.error('Error explaining text:', error);
           explanationOutput.innerHTML = `<p style="color: red;">Error: ${
             error.message ||
             'Failed to get explanation. Please make sure you have Chrome Canary with AI features enabled.'
@@ -236,10 +242,11 @@ if (typeof window.nanoAssistantInitialized === 'undefined') {
         }
       };
 
-    nanoAssistantModal.querySelector('.nano-assistant-close-button').onclick = () => {
-      nanoAssistantModal.classList.remove('show');
-      document.body.classList.remove('nano-assistant-modal-open');
-    };
+    nanoAssistantModal.querySelector('.nano-assistant-close-button').onclick =
+      () => {
+        nanoAssistantModal.classList.remove('show');
+        document.body.classList.remove('nano-assistant-modal-open');
+      };
 
     nanoAssistantModal.onclick = (event) => {
       if (event.target === nanoAssistantModal) {
@@ -249,32 +256,225 @@ if (typeof window.nanoAssistantInitialized === 'undefined') {
     };
   }
 
-  chrome.runtime.onMessage.addListener(async (request) => {
-    if (request.action === 'showExplanation') {
-      const selectedTextElement = document.getElementById(
-        'nano-assistant-modal-selected-text'
-      );
-      const contextInput = document.getElementById(
-        'nano-assistant-modal-context-input'
-      );
-      const explanationOutput = document.getElementById(
-        'nano-assistant-modal-explanation'
-      );
+  let currentSelection = '';
+  let currentElement = null;
+  let currentRange = null;
+  let currentStartOffset = 0;
+  let currentEndOffset = 0;
 
-      if (selectedTextElement && contextInput && explanationOutput) {
-        if (request.noSelection) {
-          selectedTextElement.textContent = '';
-          contextInput.value = '';
-          explanationOutput.textContent =
-            'Please provide context or questions below to get an explanation.';
-        } else if (request.text) {
-          selectedTextElement.textContent = request.text;
-          contextInput.value = '';
-          explanationOutput.textContent = '';
+  chrome.runtime.onMessage.addListener(
+    async (request, sender, sendResponse) => {
+      if (request.action === 'autoRephrase' && window.isProcessingRephrase) {
+        return;
+      }
+
+      if (request.action === 'showExplanation') {
+        const selectedTextElement = document.getElementById(
+          'nano-assistant-modal-selected-text'
+        );
+        const contextInput = document.getElementById(
+          'nano-assistant-modal-context-input'
+        );
+        const explanationOutput = document.getElementById(
+          'nano-assistant-modal-explanation'
+        );
+
+        if (selectedTextElement && contextInput && explanationOutput) {
+          if (request.noSelection) {
+            selectedTextElement.textContent = '';
+            contextInput.value = '';
+            explanationOutput.textContent =
+              'Please provide context or questions below to get an explanation.';
+          } else if (request.text) {
+            selectedTextElement.textContent = request.text;
+            contextInput.value = '';
+            explanationOutput.textContent = '';
+          }
+          nanoAssistantModal.classList.add('show');
+          document.body.classList.add('nano-assistant-modal-open');
         }
-        nanoAssistantModal.classList.add('show');
-      document.body.classList.add('nano-assistant-modal-open');
+      } else if (request.action === 'autoRephrase') {
+        window.isProcessingRephrase = true;
+
+        if (request.text) {
+          await handleAutoRephrase(request.text);
+        }
       }
     }
-  });
+  );
+
+  async function handleAutoRephrase(text) {
+    try {
+      currentSelection = text;
+      currentElement = null;
+      currentRange = null;
+      currentStartOffset = 0;
+      currentEndOffset = 0;
+
+      findTargetElement(text);
+
+      const rephrasedText = await generateRephrasedText(text);
+
+      replaceTextInElement(rephrasedText);
+    } catch (error) {
+      showErrorNotification(
+        error.message || 'Failed to rephrase text. Please try again.'
+      );
+    } finally {
+      window.isProcessingRephrase = false;
+    }
+  }
+
+  function findTargetElement(text) {
+    const sel = window.getSelection();
+    const activeEl = document.activeElement;
+
+    if (
+      activeEl &&
+      (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')
+    ) {
+      currentElement = activeEl;
+      currentStartOffset = activeEl.selectionStart ?? 0;
+      currentEndOffset = activeEl.selectionEnd ?? currentStartOffset;
+    } else if (sel && sel.rangeCount > 0) {
+      currentRange = sel.getRangeAt(0).cloneRange();
+      const ancestor = currentRange.commonAncestorContainer;
+      currentElement =
+        ancestor.nodeType === Node.ELEMENT_NODE
+          ? ancestor
+          : ancestor.parentElement;
+    } else {
+      const contentEditableElements = document.querySelectorAll(
+        '[contenteditable="true"], [contenteditable=""]'
+      );
+      for (const element of contentEditableElements) {
+        const idx = element.textContent.indexOf(text);
+        if (idx !== -1) {
+          currentElement = element;
+          currentStartOffset = idx;
+          currentEndOffset = idx + text.length;
+          break;
+        }
+      }
+    }
+  }
+
+  async function generateRephrasedText(text) {
+    let session;
+
+    if (window.LanguageModel) {
+      session = await window.LanguageModel.create({
+        model: '@chrome/gemini-nano',
+        stream: false,
+        language: 'en',
+        outputLanguage: 'en',
+      });
+    } else {
+      throw new Error(
+        'AI Language Model API is not available. Please ensure you have Chrome Canary with AI features enabled.'
+      );
+    }
+
+    const prompt = `Rewrite this text in a different way but keep the same meaning. IMPORTANT: Return exactly one sentence only. Do not provide multiple versions or alternatives. Text to rewrite: ${text}`;
+    const response = await session.prompt(prompt, { outputLanguage: 'en' });
+
+    let rephrasedText = '';
+
+    if (typeof response === 'string') {
+      rephrasedText = response;
+    } else if (response && typeof response.toString === 'function') {
+      rephrasedText = response.toString();
+    } else {
+      rephrasedText = String(response);
+    }
+
+    rephrasedText = rephrasedText.trim();
+
+    const sentences = rephrasedText.split(/(?<=[.!?])\s+/);
+
+    if (sentences.length > 1) {
+      rephrasedText = sentences[0].trim();
+    }
+
+    return rephrasedText;
+  }
+
+  function replaceTextInElement(rephrasedText) {
+    if (
+      currentElement &&
+      (currentElement.tagName === 'INPUT' ||
+        currentElement.tagName === 'TEXTAREA')
+    ) {
+      const beforeText = currentElement.value.substring(0, currentStartOffset);
+      const afterText = currentElement.value.substring(currentEndOffset);
+      currentElement.value = beforeText + rephrasedText + afterText;
+
+      const newCursorPosition = currentStartOffset + rephrasedText.length;
+      currentElement.setSelectionRange(newCursorPosition, newCursorPosition);
+      currentElement.focus();
+    } else if (currentRange) {
+      try {
+        currentRange.deleteContents();
+        const textNode = document.createTextNode(rephrasedText);
+        currentRange.insertNode(textNode);
+
+        currentRange.setStartAfter(textNode);
+        currentRange.collapse(true);
+
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(currentRange);
+      } catch (e) {}
+    } else if (currentElement && currentElement.isContentEditable) {
+      const textContent =
+        currentElement.textContent || currentElement.innerText;
+      const beforeText = textContent.substring(0, currentStartOffset);
+      const afterText = textContent.substring(currentEndOffset);
+
+      currentElement.textContent = beforeText + rephrasedText + afterText;
+
+      try {
+        const range = document.createRange();
+        const sel = window.getSelection();
+        const newCursorPosition = currentStartOffset + rephrasedText.length;
+
+        if (currentElement.firstChild) {
+          range.setStart(
+            currentElement.firstChild,
+            Math.min(newCursorPosition, currentElement.textContent.length)
+          );
+          range.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+
+        currentElement.focus();
+      } catch (e) {}
+    }
+  }
+
+  function showErrorNotification(message) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #f44336;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 4px;
+      z-index: 10000;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 3000);
+  }
 }
